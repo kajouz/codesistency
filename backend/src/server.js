@@ -12,7 +12,7 @@ import orderRoutes from "./routes/order.route.js";
 import reviewRoutes from "./routes/review.route.js";
 import productRoutes from "./routes/product.route.js";
 import cartRoutes from "./routes/cart.route.js";
-import paymentRoutes from "./routes/payment.route.js";
+// import paymentRoutes from "./routes/payment.route.js";
 
 const app = express();
 const __dirname = path.resolve();
