@@ -1,7 +1,5 @@
-import React from "react";
-import { SignedIn, SignedOut, SignInButton, UserButton } from "@clerk/clerk-react";
 import { Navigate, Route, Routes } from "react-router";
-import LoginPage from "./pages/LoginPage.jsx";
+import LoginPage from "./pages/LoginPage";
 import { useAuth } from "@clerk/clerk-react";
 import DashboardPage from "./pages/DashboardPage";
 import ProductsPage from "./pages/ProductsPage";
@@ -13,6 +11,7 @@ import PageLoader from "./components/PageLoader";
 
 function App() {
   const { isSignedIn, isLoaded } = useAuth();
+
   if (!isLoaded) return <PageLoader />;
 
   return (
