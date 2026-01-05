@@ -20,10 +20,13 @@ function ProductsPage() {
   const queryClient = useQueryClient();
 
   // fetch some data
-  const { data: products = [] } = useQuery({
+  const { data: { products } = {} } = useQuery({
     queryKey: ["products"],
     queryFn: productApi.getAll,
   });
+
+  const productList = products || [];
+  console.log("productList:", productList);
 
   // creating, update, deleting
   const createProductMutation = useMutation({
@@ -88,7 +91,7 @@ function ProductsPage() {
     });
 
     setImages(files);
-    setImagePreviews(files.map((file) => URL.createObjectURL(file)));
+    setImagePreviews(files?.map((file) => URL.createObjectURL(file)));
   };
 
   const handleSubmit = (e) => {
@@ -132,7 +135,7 @@ function ProductsPage() {
 
       {/* PRODUCTS GRID */}
       <div className="grid grid-cols-1 gap-4">
-        {products?.map((product) => {
+        {productList?.map((product) => {
           const status = getStockStatusBadge(product.stock);
 
           return (
@@ -307,7 +310,7 @@ function ProductsPage() {
 
               {imagePreviews.length > 0 && (
                 <div className="flex gap-2 mt-2">
-                  {imagePreviews.map((preview, index) => (
+                  {imagePreviews?.map((preview, index) => (
                     <div key={index} className="avatar">
                       <div className="w-20 rounded-lg">
                         <img src={preview} alt={`Preview ${index + 1}`} />
