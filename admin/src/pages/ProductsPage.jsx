@@ -20,10 +20,12 @@ function ProductsPage() {
   const queryClient = useQueryClient();
 
   // fetch some data
-  const { data: products = [] } = useQuery({
+  const { data: { products } = {} } = useQuery({
     queryKey: ["products"],
     queryFn: productApi.getAll,
   });
+
+  const productList = products || [];
 
   // creating, update, deleting
   const createProductMutation = useMutation({
@@ -132,7 +134,7 @@ function ProductsPage() {
 
       {/* PRODUCTS GRID */}
       <div className="grid grid-cols-1 gap-4">
-        {products?.map((product) => {
+        {productList?.map((product) => {
           const status = getStockStatusBadge(product.stock);
 
           return (
