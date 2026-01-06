@@ -49,13 +49,13 @@ export async function getAllProducts(_, res) {
   try {
     // -1 means in desc order: most recent products first
     const products = await Product.find().sort({ createdAt: -1 });
+    console.log("Fetched products:", products.length);
     res.status(200).json({ products });
   } catch (error) {
     console.error("Error fetching products:", error);
     res.status(500).json({ message: "Internal server error" });
   }
 }
-
 export async function updateProduct(req, res) {
   try {
     const { id } = req.params;
