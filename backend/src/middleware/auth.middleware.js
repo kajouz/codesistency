@@ -6,11 +6,20 @@ export const protectRoute = [
   requireAuth(),
   async (req, res, next) => {
     try {
-      const clerkId = req.auth().userId;
+      const clerkUser = req.auth();
+      const clerkId = clerkUser.userId;
       if (!clerkId) return res.status(401).json({ message: "Unauthorized - invalid token" });
 
-      const user = await User.findOne({ clerkId });
-      if (!user) return res.status(404).json({ message: "User not found" });
+      let user = await User.findOne({ clerkId });
+      if (!user) {
+        // Create user if not exists
+        user = await User.create({
+          clerkId,
+          email: clerkUser.emailAddresses[0]?.emailAddress || "",
+          name: clerkUser.firstName + " " + clerkUser.lastName || "",
+          imageUrl: clerkUser.imageUrl || "",
+        });
+      }
 
       req.user = user;
 
