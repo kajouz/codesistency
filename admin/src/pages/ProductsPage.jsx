@@ -20,7 +20,11 @@ function ProductsPage() {
   const queryClient = useQueryClient();
 
   // fetch some data
-  const { data: { products } = {} } = useQuery({
+  const {
+    data: { products } = {},
+    isLoading,
+    error,
+  } = useQuery({
     queryKey: ["products"],
     queryFn: productApi.getAll,
   });
@@ -133,62 +137,78 @@ function ProductsPage() {
         </button>
       </div>
 
+      {/* LOADING STATE */}
+      {isLoading && (
+        <div className="flex justify-center py-8">
+          <span className="loading loading-spinner loading-lg" />
+        </div>
+      )}
+
+      {/* ERROR STATE */}
+      {error && (
+        <div className="alert alert-error">
+          <span>Error loading products: {error.message}</span>
+        </div>
+      )}
+
       {/* PRODUCTS GRID */}
-      <div className="grid grid-cols-1 gap-4">
-        {productList?.map((product) => {
-          const status = getStockStatusBadge(product.stock);
+      {!isLoading && !error && (
+        <div className="grid grid-cols-1 gap-4">
+          {productList?.map((product) => {
+            const status = getStockStatusBadge(product.stock);
 
-          return (
-            <div key={product._id} className="card bg-base-100 shadow-xl">
-              <div className="card-body">
-                <div className="flex items-center gap-6">
-                  <div className="avatar">
-                    <div className="w-20 rounded-xl">
-                      <img src={product.images[0]} alt={product.name} />
-                    </div>
-                  </div>
-
-                  <div className="flex-1">
-                    <div className="flex items-start justify-between">
-                      <div>
-                        <h3 className="card-title">{product.name}</h3>
-                        <p className="text-base-content/70 text-sm">{product.category}</p>
-                      </div>
-                      <div className={`badge ${status.class}`}>{status.text}</div>
-                    </div>
-                    <div className="flex items-center gap-6 mt-4">
-                      <div>
-                        <p className="text-xs text-base-content/70">Price</p>
-                        <p className="font-bold text-lg">${product.price}</p>
-                      </div>
-                      <div>
-                        <p className="text-xs text-base-content/70">Stock</p>
-                        <p className="font-bold text-lg">{product.stock} units</p>
+            return (
+              <div key={product._id} className="card bg-base-100 shadow-xl">
+                <div className="card-body">
+                  <div className="flex items-center gap-6">
+                    <div className="avatar">
+                      <div className="w-20 rounded-xl">
+                        <img src={product.images[0]} alt={product.name} />
                       </div>
                     </div>
-                  </div>
 
-                  <div className="card-actions">
-                    <button className="btn btn-square btn-ghost" onClick={() => handleEdit(product)}>
-                      <PencilIcon className="w-5 h-5" />
-                    </button>
-                    <button
-                      className="btn btn-square btn-ghost text-error"
-                      onClick={() => deleteProductMutation.mutate(product._id)}
-                    >
-                      {deleteProductMutation.isPending ? (
-                        <span className="loading loading-spinner"></span>
-                      ) : (
-                        <Trash2Icon className="w-5 h-5" />
-                      )}
-                    </button>
+                    <div className="flex-1">
+                      <div className="flex items-start justify-between">
+                        <div>
+                          <h3 className="card-title">{product.name}</h3>
+                          <p className="text-base-content/70 text-sm">{product.category}</p>
+                        </div>
+                        <div className={`badge ${status.class}`}>{status.text}</div>
+                      </div>
+                      <div className="flex items-center gap-6 mt-4">
+                        <div>
+                          <p className="text-xs text-base-content/70">Price</p>
+                          <p className="font-bold text-lg">${product.price}</p>
+                        </div>
+                        <div>
+                          <p className="text-xs text-base-content/70">Stock</p>
+                          <p className="font-bold text-lg">{product.stock} units</p>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="card-actions">
+                      <button className="btn btn-square btn-ghost" onClick={() => handleEdit(product)}>
+                        <PencilIcon className="w-5 h-5" />
+                      </button>
+                      <button
+                        className="btn btn-square btn-ghost text-error"
+                        onClick={() => deleteProductMutation.mutate(product._id)}
+                      >
+                        {deleteProductMutation.isPending ? (
+                          <span className="loading loading-spinner"></span>
+                        ) : (
+                          <Trash2Icon className="w-5 h-5" />
+                        )}
+                      </button>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-          );
-        })}
-      </div>
+            );
+          })}
+        </div>
+      )}
 
       {/* ADD/EDIT PRODUCT MODAL */}
 
