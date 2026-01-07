@@ -30,7 +30,6 @@ function ProductsPage() {
   });
 
   const productList = products || [];
-  console.log("productList:", productList);
 
   // creating, update, deleting
   const createProductMutation = useMutation({
