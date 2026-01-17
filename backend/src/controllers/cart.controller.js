@@ -13,6 +13,10 @@ export async function getCart(req, res) {
         clerkId: user.clerkId,
         items: [],
       });
+    } else {
+      // Filter out items where product no longer exists
+      cart.items = cart.items.filter((item) => item.product !== null);
+      await cart.save();
     }
 
     res.status(200).json({ cart });
@@ -64,6 +68,9 @@ export async function addToCart(req, res) {
 
     await cart.save();
 
+    // Populate the cart items with product details
+    await cart.populate("items.product");
+
     res.status(200).json({ message: "Item added to cart", cart });
   } catch (error) {
     console.error("Error in addToCart controller:", error);
@@ -103,6 +110,9 @@ export async function updateCartItem(req, res) {
     cart.items[itemIndex].quantity = quantity;
     await cart.save();
 
+    // Populate the cart items with product details
+    await cart.populate("items.product");
+
     res.status(200).json({ message: "Cart updated successfully", cart });
   } catch (error) {
     console.error("Error in updateCartItem controller:", error);
@@ -122,6 +132,9 @@ export async function removeFromCart(req, res) {
     cart.items = cart.items.filter((item) => item.product.toString() !== productId);
     await cart.save();
 
+    // Populate the cart items with product details
+    await cart.populate("items.product");
+
     res.status(200).json({ message: "Item removed from cart", cart });
   } catch (error) {
     console.error("Error in removeFromCart controller:", error);
@@ -138,6 +151,9 @@ export const clearCart = async (req, res) => {
 
     cart.items = [];
     await cart.save();
+
+    // Populate the cart items with product details (though empty now)
+    await cart.populate("items.product");
 
     res.status(200).json({ message: "Cart cleared", cart });
   } catch (error) {
